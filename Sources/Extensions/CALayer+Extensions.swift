@@ -16,14 +16,34 @@ extension CALayer {
             $0.tint(withColors: colors)
         }
     }
+    
+    func generateGradient(colors: [UIColor]) {
+        skeletonSublayers.recursiveSearch(leafBlock: {
+            self.backgroundColor = colors.first?.cgColor
+        }) {
+            $0.generateGradient(colors: colors)
+        }
+    }
 }
 
 extension CAGradientLayer {
     override func tint(withColors colors: [UIColor]) {
         skeletonSublayers.recursiveSearch(leafBlock: {
             self.colors = colors.map { $0.cgColor }
+            self.startPoint = CGPoint(x: 0, y: 0)
+            self.endPoint = CGPoint(x: 1, y: 1)
         }) {
             $0.tint(withColors: colors)
+        }
+    }
+    
+    func generateGradient(colors: [UIColor], direction: (start: CGPoint, end: CGPoint)) {
+        skeletonSublayers.recursiveSearch(leafBlock: {
+            self.colors = colors.map { $0.cgColor }
+            self.startPoint = direction.start
+            self.endPoint = direction.end
+        }) {
+            $0.generateGradient(colors: colors)
         }
     }
 }
@@ -163,14 +183,16 @@ public extension CALayer {
         return pulseAnimation
     }
     
-    func playAnimation(_ anim: SkeletonLayerAnimation, key: String, completion: (() -> Void)? = nil) {
-        skeletonSublayers.recursiveSearch(leafBlock: {
-            DispatchQueue.main.async { CATransaction.begin() }
-            DispatchQueue.main.async { CATransaction.setCompletionBlock(completion) }
-            add(anim(self), forKey: key)
-            DispatchQueue.main.async { CATransaction.commit() }
-        }) {
-            $0.playAnimation(anim, key: key, completion: completion)
+    func playAnimation(_ anim: SkeletonLayerAnimation?, key: String, completion: (() -> Void)? = nil) {
+        if let animation = anim {
+            skeletonSublayers.recursiveSearch(leafBlock: {
+                DispatchQueue.main.async { CATransaction.begin() }
+                DispatchQueue.main.async { CATransaction.setCompletionBlock(completion) }
+                add(animation(self), forKey: key)
+                DispatchQueue.main.async { CATransaction.commit() }
+            }) {
+                $0.playAnimation(anim, key: key, completion: completion)
+            }
         }
     }
     

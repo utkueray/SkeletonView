@@ -15,9 +15,9 @@ public struct SkeletonGradient {
         return gradientColors
     }
     
-    public init(baseColor: UIColor, secondaryColor: UIColor? = nil) {
+    public init(baseColor: UIColor, secondaryColor: UIColor? = nil, repeatColors: Bool? = false) {
         if let secondary = secondaryColor {
-            self.gradientColors = [baseColor, secondary, baseColor]
+            self.gradientColors = repeatColors == true ? [baseColor, secondary, baseColor] : [baseColor, secondary]
         } else {
             self.gradientColors = baseColor.makeGradient()
         }

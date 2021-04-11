@@ -19,7 +19,7 @@ public extension UIView {
     ///   - gradient: The gradient of the skeleton. Defaults to `SkeletonAppearance.default.gradient`.
     ///   - transition: The style of the transition when the skeleton appears. Defaults to `.crossDissolve(0.25)`.
     func showGradientSkeleton(usingGradient gradient: SkeletonGradient = SkeletonAppearance.default.gradient, transition: SkeletonTransitionStyle = .crossDissolve(0.25)) {
-        let config = SkeletonConfig(type: .gradient, colors: gradient.colors, transition: transition)
+        let config = SkeletonConfig(type: .gradient, colors: gradient.colors, customDirection: (start: CGPoint(x: 0, y: 0.5), end: CGPoint(x: 1, y: 0.5)), transition: transition)
         showSkeleton(skeletonConfig: config)
     }
     
@@ -45,7 +45,7 @@ public extension UIView {
     ///   - animation: The animation of the skeleton. Defaults to `nil`.
     ///   - transition: The style of the transition when the skeleton appears. Defaults to `.crossDissolve(0.25)`.
     func showAnimatedGradientSkeleton(usingGradient gradient: SkeletonGradient = SkeletonAppearance.default.gradient, animation: SkeletonLayerAnimation? = nil, transition: SkeletonTransitionStyle = .crossDissolve(0.25)) {
-        let config = SkeletonConfig(type: .gradient, colors: gradient.colors, animated: true, animation: animation, transition: transition)
+        let config = SkeletonConfig(type: .animatedGradient, colors: gradient.colors, animated: true, animation: animation, transition: transition)
         showSkeleton(skeletonConfig: config)
     }
 
@@ -55,7 +55,7 @@ public extension UIView {
     }
 
     func updateGradientSkeleton(usingGradient gradient: SkeletonGradient = SkeletonAppearance.default.gradient) {
-        let config = SkeletonConfig(type: .gradient, colors: gradient.colors)
+        let config = SkeletonConfig(type: .animatedGradient, colors: gradient.colors)
         updateSkeleton(skeletonConfig: config)
     }
 
@@ -65,7 +65,7 @@ public extension UIView {
     }
 
     func updateAnimatedGradientSkeleton(usingGradient gradient: SkeletonGradient = SkeletonAppearance.default.gradient, animation: SkeletonLayerAnimation? = nil) {
-        let config = SkeletonConfig(type: .gradient, colors: gradient.colors, animated: true, animation: animation)
+        let config = SkeletonConfig(type: .animatedGradient, colors: gradient.colors, animated: true, animation: animation)
         updateSkeleton(skeletonConfig: config)
     }
 
@@ -275,9 +275,11 @@ extension UIView {
             .setSkeletonType(config.type)
             .addColors(config.colors)
             .setHolder(self)
+            .setCustomDirection(config.customDirection)
             .build()
             else { return }
 
+        
         self.skeletonLayer = skeletonLayer
         layer.insertSublayer(skeletonLayer,
                              at: UInt32.max,

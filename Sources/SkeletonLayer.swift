@@ -12,23 +12,28 @@ public typealias SkeletonLayerAnimation = (CALayer) -> CAAnimation
 
 public enum SkeletonType {
     case solid
+    case animatedGradient
     case gradient
     
     var layer: CALayer {
         switch self {
         case .solid:
             return CALayer()
+        case .animatedGradient:
+            return CAGradientLayer()
         case .gradient:
             return CAGradientLayer()
         }
     }
     
-    func defaultLayerAnimation(isRTL: Bool) -> SkeletonLayerAnimation {
+    func defaultLayerAnimation(isRTL: Bool) -> SkeletonLayerAnimation? {
         switch self {
         case .solid:
             return { $0.pulse }
-        case .gradient:
+        case .animatedGradient:
             return { SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: isRTL ? .rightLeft : .leftRight) }()
+        case .gradient:
+            return nil
         }
     }
 }
@@ -36,23 +41,33 @@ public enum SkeletonType {
 struct SkeletonLayer {
     private var maskLayer: CALayer
     private weak var holder: UIView?
+    private var defaultDirection = (start: CGPoint(x: 0, y: 0.5), end: CGPoint(x: 1, y: 0.5))
     
     var type: SkeletonType {
-        return maskLayer is CAGradientLayer ? .gradient : .solid
+        return maskLayer is CAGradientLayer ? .animatedGradient : .solid
     }
     
     var contentLayer: CALayer {
         return maskLayer
     }
     
-    init(type: SkeletonType, colors: [UIColor], skeletonHolder holder: UIView) {
+    init(type: SkeletonType, colors: [UIColor], skeletonHolder holder: UIView, direction: (start: CGPoint, end: CGPoint)?) {
         self.holder = holder
         self.maskLayer = type.layer
+        guard let layer = (self.maskLayer as? CAGradientLayer), type == .gradient else {
+            self.maskLayer.anchorPoint = .zero
+            self.maskLayer.bounds = holder.definedMaxBounds
+            self.maskLayer.cornerRadius = CGFloat(holder.skeletonCornerRadius)
+            addTextLinesIfNeeded()
+            self.maskLayer.tint(withColors: colors)
+            return
+        }
+        
+        layer.generateGradient(colors: colors, direction: direction ?? defaultDirection)
         self.maskLayer.anchorPoint = .zero
         self.maskLayer.bounds = holder.definedMaxBounds
         self.maskLayer.cornerRadius = CGFloat(holder.skeletonCornerRadius)
         addTextLinesIfNeeded()
-        self.maskLayer.tint(withColors: colors)
     }
     
     func update(usingColors colors: [UIColor]) {

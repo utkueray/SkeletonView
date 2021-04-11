@@ -8,7 +8,8 @@ class SkeletonLayerBuilder {
     var skeletonType: SkeletonType?
     var colors: [UIColor] = []
     var holder: UIView?
-
+    var customDirection: (start: CGPoint, end: CGPoint)?
+    
     @discardableResult
     func setSkeletonType(_ type: SkeletonType) -> SkeletonLayerBuilder {
         self.skeletonType = type
@@ -31,6 +32,12 @@ class SkeletonLayerBuilder {
         self.holder = holder
         return self
 	}
+    
+    @discardableResult
+    func setCustomDirection(_ customDirection: (start: CGPoint, end: CGPoint)?) -> SkeletonLayerBuilder {
+        self.customDirection = customDirection
+        return self
+    }
 	
     @discardableResult
 	func build() -> SkeletonLayer? {
@@ -40,6 +47,7 @@ class SkeletonLayerBuilder {
 		
 		return SkeletonLayer(type: type,
 							 colors: colors,
-							 skeletonHolder: holder)
+                             skeletonHolder: holder,
+                             direction: customDirection)
 	}
 }

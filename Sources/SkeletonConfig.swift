@@ -22,9 +22,13 @@ struct SkeletonConfig {
     ///  Transition style
     var transition: SkeletonTransitionStyle
     
+    /// Custom Direction
+    var customDirection: (start: CGPoint, end: CGPoint)?
+    
     init(type: SkeletonType,
          colors: [UIColor],
          gradientDirection: GradientDirection? = nil,
+         customDirection: (start: CGPoint, end: CGPoint)? = nil,
          animated: Bool = false,
          animation: SkeletonLayerAnimation? = nil,
          transition: SkeletonTransitionStyle = .crossDissolve(0.25)) {
@@ -34,5 +38,6 @@ struct SkeletonConfig {
         self.animated = animated
         self.animation = animation
         self.transition = transition
+        self.customDirection = customDirection
     }
 }

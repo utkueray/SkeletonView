@@ -40,7 +40,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var transitionDurationStepper: UIStepper!
     
     var type: SkeletonType {
-        return skeletonTypeSelector.selectedSegmentIndex == 0 ? .solid : .gradient
+        return skeletonTypeSelector.selectedSegmentIndex == 0 ? .solid : .animatedGradient
     }
     
     override func viewDidLoad() {
@@ -86,7 +86,7 @@ class ViewController: UIViewController {
     
     func refreshSkeleton() {
         self.view.hideSkeleton()
-        if type == .gradient { showGradientSkeleton() }
+        if type == .animatedGradient { showGradientSkeleton() }
         else { showSolidSkeleton() }
     }
     
@@ -99,10 +99,11 @@ class ViewController: UIViewController {
     }
     
     func showGradientSkeleton() {
-        let gradient = SkeletonGradient(baseColor: colorSelectedView.backgroundColor!)
         if switchAnimated.isOn {
+            let gradient = SkeletonGradient(baseColor: colorSelectedView.backgroundColor!, repeatColors: true)
             view.showAnimatedGradientSkeleton(usingGradient: gradient, transition: .crossDissolve(transitionDurationStepper.value))
         } else {
+            let gradient = SkeletonGradient(baseColor: colorSelectedView.backgroundColor!)
             view.showGradientSkeleton(usingGradient: gradient, transition: .crossDissolve(transitionDurationStepper.value))
         }
     }
