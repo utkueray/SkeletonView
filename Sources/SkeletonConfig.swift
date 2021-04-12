@@ -11,7 +11,7 @@ struct SkeletonConfig {
     let colors: [UIColor]
     
     /// If type is gradient, which gradient direction
-    let gradientDirection: GradientDirection?
+    let gradientDirection: GradientAnimationDirection?
     
     /// Specify if skeleton is animated or not
     let animated: Bool
@@ -27,7 +27,7 @@ struct SkeletonConfig {
     
     init(type: SkeletonType,
          colors: [UIColor],
-         gradientDirection: GradientDirection? = nil,
+         gradientDirection: GradientAnimationDirection? = nil,
          customDirection: (start: CGPoint, end: CGPoint)? = nil,
          animated: Bool = false,
          animation: SkeletonLayerAnimation? = nil,

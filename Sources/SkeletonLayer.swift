@@ -63,7 +63,12 @@ struct SkeletonLayer {
             return
         }
         
-        layer.generateGradient(colors: colors, direction: direction ?? defaultDirection)
+        if holder is UITextView {
+            layer.generateGradient(colors: colors.reversed(), direction: direction ?? defaultDirection)
+        } else {
+            layer.generateGradient(colors: colors, direction: direction ?? defaultDirection)
+        }
+        
         self.maskLayer.anchorPoint = .zero
         self.maskLayer.bounds = holder.definedMaxBounds
         self.maskLayer.cornerRadius = CGFloat(holder.skeletonCornerRadius)
